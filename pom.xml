@@ -20,7 +20,7 @@
   <description>Demo project for Spring Boot</description>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
   </properties>
 
   <dependencies>
@@ -52,22 +52,3 @@
 
       <plugin>
         <groupId>com.microsoft.azure</groupId>
-        <artifactId>azure-functions-maven-plugin</artifactId>
-        <version>1.16.0</version>
-        <configuration>
-          <resourceGroup>RG1</resourceGroup>
-          <appName>javafunction</appName>
-          <region>canadacentral</region>
-          <runtime>
-            <os>linux</os>
-            <javaVersion>11</javaVersion>
-          </runtime>
-          <appServicePlanName>flex-consumption-plan</appServicePlanName>
-          <pricingTier>B1</pricingTier>
-          <deploymentType>zip</deploymentType>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-
-</project>
