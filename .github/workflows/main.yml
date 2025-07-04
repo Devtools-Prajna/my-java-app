@@ -1,36 +1,37 @@
-name: Build and Deploy Java Azure Function
+name: Build and Deploy Azure Function
 
 on:
   push:
     branches:
-      - main
+      - main  # Change if your default branch is different
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - uses: actions/setup-java@v3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 11
+          java-version: 17
 
-      - uses: actions/cache@v3
+      - name: Cache Maven packages
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-maven-
 
-      - name: Build with Maven
-        run: mvn clean package
-
-      - name: List files for debugging
-        run: ls -lR target
+      - name: Build and package Azure Function
+        run: mvn clean package azure-functions:package
 
       - name: Deploy to Azure Function App
         uses: azure/functions-action@v1
         with:
           app-name: javafunction
-          package: '${{ github.workspace }}/target/azure-function-hello-1.0-SNAPSHOT.jar'  # Adjust this path based on ls output
+          package: '${{ github.workspace }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.zip'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
