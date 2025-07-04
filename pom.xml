@@ -6,43 +6,17 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.5</version>
-    <relativePath/>
-  </parent>
-
   <groupId>com.example</groupId>
-  <artifactId>demo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>demo</name>
-  <description>Demo project for Spring Boot</description>
+  <artifactId>azure-function-hello</artifactId>
+  <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <java.version>11</java.version>
+    <java.version>17</java.version>
+    <func.maven.plugin.version>1.16.0</func.maven.plugin.version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>azure-functions</id>
-      <url>https://maven.pkg.github.com/Azure/azure-functions-java-library</url>
-    </repository>
-  </repositories>
-
   <dependencies>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Azure Functions Java Library version 1.4.2 from GitHub Packages -->
+    <!-- Azure Functions Java Library -->
     <dependency>
       <groupId>com.microsoft.azure.functions</groupId>
       <artifactId>azure-functions-java-library</artifactId>
@@ -52,22 +26,18 @@
 
   <build>
     <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-
+      <!-- Azure Functions Maven Plugin -->
       <plugin>
         <groupId>com.microsoft.azure</groupId>
         <artifactId>azure-functions-maven-plugin</artifactId>
-        <version>1.16.0</version>
+        <version>${func.maven.plugin.version}</version>
         <configuration>
           <resourceGroup>RG1</resourceGroup>
           <appName>javafunction</appName>
           <region>canadacentral</region>
           <runtime>
             <os>linux</os>
-            <javaVersion>11</javaVersion>
+            <javaVersion>17</javaVersion>
           </runtime>
           <appServicePlanName>flex-consumption-plan</appServicePlanName>
           <pricingTier>B1</pricingTier>
