@@ -43,3 +43,4 @@ jobs:
           app-name: javafunction
           package: '${{ github.workspace }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.jar'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+      
