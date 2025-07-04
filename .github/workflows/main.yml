@@ -1,33 +1,43 @@
-name: Build and Deploy Java Azure Function
+name: Deploy Java project to Azure Function App
 
 on:
   push:
     branches:
-      - main  # or your desired branch
+      - main  # ✅ Trigger on push to main branch
+
+env:
+  AZURE_FUNCTIONAPP_NAME: 'javafunction'  # 🔁 Replace with your Azure Function App name
+  POM_XML_DIRECTORY: '.'                            # ✅ Root directory
+  JAVA_VERSION: '17'                                # 🔁 Change if you're using Java 8 or 11
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
+    environment: dev
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: 'Checkout code'
+      uses: actions/checkout@v3
 
-      - name: Set up Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'  # or use your version
-          distribution: 'temurin'
+    - name: 'Set up Java SDK ${{ env.JAVA_VERSION }}'
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Build project with Maven
-        run: mvn clean package
+    - name: 'Build project with Maven'
+      shell: pwsh
+      run: |
+        pushd '${{ env.POM_XML_DIRECTORY }}'
+        mvn clean package
+        popd
 
-      - name: List contents of target folder (for debugging)
-        run: ls -R target/
+    - name: 'Debug: List ZIP file'
+      run: dir target\azure-functions\ /s
 
-      - name: Deploy to Azure Functions
-        uses: azure/functions-action@v1
-        with:
-          app-name: 'javafunction'  # 🔁 Replace with your Azure Function App name
-          package: 'target/azure-functions/<your-function-name>-1.0-SNAPSHOT.zip'  # 🔁 Check your exact .zip name
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+    - name: 'Deploy to Azure Function App'
+      uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+        package: '${{ env.POM_XML_DIRECTORY }}'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        respect-pom-xml: true
