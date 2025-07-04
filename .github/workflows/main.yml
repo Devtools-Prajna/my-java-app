@@ -6,9 +6,9 @@ on:
       - main  # ✅ Trigger on push to main branch
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'javafunction'  # 🔁 Replace with your Azure Function App name
-  POM_XML_DIRECTORY: '.'                            # ✅ Root directory
-  JAVA_VERSION: '17'                                # 🔁 Change if you're using Java 8 or 11
+  AZURE_FUNCTIONAPP_NAME: 'javafunction'         # 🔁 Replace with your actual Azure Function App name
+  POM_XML_DIRECTORY: '.'                         # ✅ Root directory
+  JAVA_VERSION: '17'                             # 🔁 Change if you're using Java 8 or 11
 
 jobs:
   build-and-deploy:
@@ -16,28 +16,30 @@ jobs:
     environment: dev
 
     steps:
-    - name: 'Checkout code'
-      uses: actions/checkout@v3
+      - name: 'Checkout code'
+        uses: actions/checkout@v3
 
-    - name: 'Set up Java SDK ${{ env.JAVA_VERSION }}'
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ env.JAVA_VERSION }}
+      - name: 'Set up Java SDK ${{ env.JAVA_VERSION }}'
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
 
-    - name: 'Build project with Maven'
-      shell: pwsh
-      run: |
-        pushd '${{ env.POM_XML_DIRECTORY }}'
-        mvn clean package azure-functions:package
-        popd
+      - name: 'Build project with Maven'
+        shell: pwsh
+        run: |
+          pushd '${{ env.POM_XML_DIRECTORY }}'
+          mvn clean package azure-functions:package
+          popd
 
-    - name: 'Check output'
-      run: dir target\azure-functions\ /s
-      
-    - name: Deploy to Azure Function App
-      uses: Azure/functions-action@v1
-      with:
-        app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.POM_XML_DIRECTORY }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.zip'
-        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-    
+      - name: 'Check output ZIP file'
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path "${{ env.POM_XML_DIRECTORY }}/target/azure-functions" -Recurse
+        continue-on-error: true
+
+      - name: Deploy to Azure Function App
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: '${{ env.POM_XML_DIRECTORY }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.zip'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
