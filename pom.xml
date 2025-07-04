@@ -52,3 +52,28 @@
 
       <plugin>
         <groupId>com.microsoft.azure</groupId>
+        <artifactId>azure-functions-maven-plugin</artifactId>
+        <version>1.16.0</version>
+        <configuration>
+          <resourceGroup>RG1</resourceGroup>
+          <appName>javafunction</appName>
+          <region>canadacentral</region>
+          <runtime>
+            <os>linux</os>
+            <javaVersion>17</javaVersion>
+          </runtime>
+          <pricingTier>B1</pricingTier>
+          <deploymentType>zip</deploymentType>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
