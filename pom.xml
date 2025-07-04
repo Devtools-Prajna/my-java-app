@@ -34,6 +34,7 @@
         <configuration>
           <resourceGroup>RG1</resourceGroup>
           <appName>javafunction</appName>
+          <functionAppName>azure-function-hello</functionAppName> <!-- ✅ Required for GitHub Actions -->
           <region>canadacentral</region>
           <runtime>
             <os>linux</os>
