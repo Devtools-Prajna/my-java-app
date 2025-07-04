@@ -3,7 +3,7 @@ name: Build and Deploy Java Azure Function
 on:
   push:
     branches:
-      - main  # your default branch
+      - main
 
 jobs:
   build:
@@ -30,10 +30,10 @@ jobs:
         run: mvn clean package
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: azure-function-artifact
-          path: target/*.jar  # adjust if your artifact is somewhere else
+          path: target/*.jar
 
   deploy:
     needs: build
@@ -41,7 +41,7 @@ jobs:
 
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: azure-function-artifact
           path: ./artifact
@@ -50,5 +50,5 @@ jobs:
         uses: azure/functions-action@v1
         with:
           app-name: javafunction
-          package: './artifact/*.jar'  # matches the downloaded artifact
+          package: './artifact/*.jar'
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
