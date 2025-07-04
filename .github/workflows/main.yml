@@ -28,10 +28,10 @@ jobs:
       shell: pwsh
       run: |
         pushd '${{ env.POM_XML_DIRECTORY }}'
-        mvn clean package
+        mvn clean package azure-functions:package
         popd
 
-    - name: 'Debug: List ZIP file'
+    - name: 'Check output'
       run: dir target\azure-functions\ /s
 
     - name: 'Deploy to Azure Function App'
