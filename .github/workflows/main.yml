@@ -6,21 +6,17 @@ on:
       - main
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Java 17
-        uses: actions/setup-java@v3
+      - uses: actions/setup-java@v3
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 11
 
-      - name: Cache Maven repository
-        uses: actions/cache@v3
+      - uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -29,18 +25,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
+      - name: List files for debugging
+        run: ls -lR target
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Deploy to Azure Function
+      - name: Deploy to Azure Function App
         uses: azure/functions-action@v1
         with:
           app-name: javafunction
-          package: '${{ github.workspace }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.jar'
+          package: '${{ github.workspace }}/target/azure-function-hello-1.0-SNAPSHOT.jar'  # Adjust this path based on ls output
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-      
