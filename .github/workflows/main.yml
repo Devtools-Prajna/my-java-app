@@ -33,11 +33,11 @@ jobs:
 
     - name: 'Check output'
       run: dir target\azure-functions\ /s
-
-    - name: 'Deploy to Azure Function App'
+      
+    - name: Deploy to Azure Function App
       uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-        package: '${{ env.POM_XML_DIRECTORY }}'
+        package: '${{ env.POM_XML_DIRECTORY }}/target/azure-functions/azure-function-hello-1.0-SNAPSHOT.zip'
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-        respect-pom-xml: true
+    
