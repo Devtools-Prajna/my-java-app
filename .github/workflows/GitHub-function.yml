@@ -1,15 +1,15 @@
-name: Build and Deploy Java Azure Function
+name: Build and Deploy Java Azure Function (No App Settings)
 
 on:
   push:
     branches:
-      - main  # Run only on main branch commits
+      - main
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'javafunction'           # Replace with your actual function app name
-  POM_XML_DIRECTORY: '.'                           # pom.xml is at the root
-  JAVA_VERSION: '17'                               # Java version used
-  ZIP_NAME: 'functionapp.zip'                      # Output ZIP file
+  AZURE_FUNCTIONAPP_NAME: 'javafunction'          # Replace with your Function App name
+  POM_XML_DIRECTORY: '.'                          # Where your pom.xml lives
+  JAVA_VERSION: '17'
+  ZIP_NAME: 'functionapp.zip'
 
 jobs:
   build-and-deploy:
@@ -24,22 +24,32 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Build with Maven
+      - name: Build the project with Maven
         shell: pwsh
         run: |
           pushd '${{ env.POM_XML_DIRECTORY }}'
           mvn clean package azure-functions:package
           popd
 
-      - name: Create ZIP for deployment
+      - name: Zip function app output
         shell: pwsh
         run: |
           Compress-Archive -Path "${{ env.POM_XML_DIRECTORY }}/target/azure-functions/javafunction/*" `
                            -DestinationPath "${{ env.POM_XML_DIRECTORY }}/target/${{ env.ZIP_NAME }}"
 
-      - name: Deploy to Azure Function App
-        uses: Azure/functions-action@v1
-        with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
-          package: '${{ env.POM_XML_DIRECTORY }}/target/${{ env.ZIP_NAME }}'
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+      - name: Deploy via cURL to Kudu ZIP Deploy API
+        shell: pwsh
+        run: |
+          $publishXml = '${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}'
+          $username = ($publishXml -split 'userName="')[1] -split '"' | Select-Object -First 1
+          $password = ($publishXml -split 'userPWD="')[1] -split '"' | Select-Object -First 1
+          $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("$username`:$password"))
+
+          $headers = @{ Authorization = "Basic $base64AuthInfo" }
+
+          Invoke-RestMethod `
+            -Uri "https://${{ env.AZURE_FUNCTIONAPP_NAME }}.scm.azurewebsites.net/api/zipdeploy" `
+            -Method POST `
+            -Headers $headers `
+            -InFile "${{ env.POM_XML_DIRECTORY }}/target/${{ env.ZIP_NAME }}" `
+            -ContentType "application/zip"
