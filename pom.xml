@@ -1,16 +1,16 @@
 <plugin>
     <groupId>com.microsoft.azure</groupId>
     <artifactId>azure-functions-maven-plugin</artifactId>
-    <version>1.16.0</version> <!-- Use latest stable -->
+    <version>1.16.0</version>
     <configuration>
-        <resourceGroup>YOUR_RESOURCE_GROUP</resourceGroup>
-        <appName>YOUR_FUNCTION_APP_NAME</appName>
-        <region>YOUR_REGION</region>
+        <resourceGroup>RG1</resourceGroup>
+        <appName>javafunction</appName>
+        <region>canadacentral</region>
         <runtime>
             <os>linux</os>
             <javaVersion>11</javaVersion>
         </runtime>
-        <appServicePlanName>YOUR_PLAN_NAME</appServicePlanName>
+        <appServicePlanName>flex consumption plan</appServicePlanName>
         <pricingTier>B1</pricingTier>
         <deploymentType>zip</deploymentType>
     </configuration>
