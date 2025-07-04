@@ -1,21 +1,17 @@
-<build>
-  <plugins>
-    <plugin>
-      <groupId>com.microsoft.azure</groupId>
-      <artifactId>azure-functions-maven-plugin</artifactId>
-      <version>1.16.0</version> <!-- Use latest -->
-      <configuration>
-        <resourceGroup>your-resource-group</resourceGroup>
-        <appName>your-function-app-name</appName>
-        <region>your-region</region>
+<plugin>
+    <groupId>com.microsoft.azure</groupId>
+    <artifactId>azure-functions-maven-plugin</artifactId>
+    <version>1.16.0</version> <!-- Use latest stable -->
+    <configuration>
+        <resourceGroup>YOUR_RESOURCE_GROUP</resourceGroup>
+        <appName>YOUR_FUNCTION_APP_NAME</appName>
+        <region>YOUR_REGION</region>
         <runtime>
-          <os>linux</os>
-          <javaVersion>11</javaVersion>
+            <os>linux</os>
+            <javaVersion>11</javaVersion>
         </runtime>
-        <appServicePlanName>your-plan</appServicePlanName>
+        <appServicePlanName>YOUR_PLAN_NAME</appServicePlanName>
         <pricingTier>B1</pricingTier>
-        <functionAppName>your-function-app-name</functionAppName>
-      </configuration>
-    </plugin>
-  </plugins>
-</build>
+        <deploymentType>zip</deploymentType>
+    </configuration>
+</plugin>
