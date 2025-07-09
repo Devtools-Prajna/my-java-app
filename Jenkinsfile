@@ -2,8 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'M398' // Replace with your Maven tool name in Jenkins
-        jdk 'Java17' // Optional: if you have a named JDK configured in Jenkins
+        maven 'M398' // Make sure 'M398' is defined under Jenkins Global Tools
     }
 
     stages {
